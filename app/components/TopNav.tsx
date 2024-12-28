@@ -8,10 +8,21 @@ export const TopNav = () => {
   const pathname = usePathname();
 
   return (
-    <Navbar bg="dark" variant="dark" fixed="top">
-      <Container fluid>
-        <Navbar.Brand>Pharmacy</Navbar.Brand>
-        <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-sideNav`} />
+    <Navbar bg="primary" data-bs-theme="dark">
+      <Container>
+        <Navbar.Brand>
+          <img
+            alt=""
+            src="/img/logo.svg"
+            width="30"
+            height="30"
+            className="d-inline-block align-top"
+          />{" "}
+          Pharmacy
+        </Navbar.Brand>
+        <Nav className="me-auto">
+          <Nav.Link href="#home">Patients</Nav.Link>
+        </Nav>
       </Container>
     </Navbar>
   );

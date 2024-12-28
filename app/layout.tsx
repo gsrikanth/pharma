@@ -17,14 +17,14 @@ export default function RootLayout({ children }: Props) {
   return (
     <StoreProvider>
       <html lang="en">
-        <body style={{ backgroundColor: "#f8f9fa", paddingTop: "60px" }}>
+        <body>
           <TopNav />
           <Container fluid>
             <Row>
-              <Col xs={1}>
+              {/* <Col xs={1}>
                 <SideNav />
-              </Col>
-              <Col xs={11}>
+              </Col> */}
+              <Col xs={12}>
                 <main>{children}</main>
               </Col>
             </Row>

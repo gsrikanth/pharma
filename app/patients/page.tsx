@@ -4,8 +4,8 @@ import PatientsList from "./patientsList";
 
 export default function Page() {
   return (
-    <Container>
-      <h4>Patients</h4>
+    <Container fluid>
+      <h6>Patients</h6>
       <PatientsList />
     </Container>
   );

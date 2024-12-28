@@ -9,6 +9,7 @@ import {
   deletePatient,
 } from "../../lib/features/patients/patientSlice";
 import { PatientType } from "@/lib/schemas/patientSchema";
+import { ButtonGroup, ButtonToolbar, Container } from "react-bootstrap";
 
 function PatientsList() {
   const [show, setShow] = useState(false);
@@ -24,7 +25,7 @@ function PatientsList() {
   );
   const dispatch = useDispatch();
   return (
-    <>
+    <section>
       <PatientForm
         show={show}
         mode={mode}
@@ -32,19 +33,23 @@ function PatientsList() {
         handleClose={handleClose}
         handleSubmit={handleClose}
       />
-
-      <div className="d-grid gap-2 d-md-flex justify-content-md-end p-3">
-        <Button
-          variant="primary"
-          onClick={() => {
-            setPatient(null);
-            setMode("add");
-            setShow(true);
-          }}
-        >
-          <i className="bi bi-person-add"></i> New Patient
-        </Button>
-      </div>
+      <ButtonToolbar
+        aria-label="Toolbar with action button groups"
+        className="justify-content-end p-1"
+      >
+        <ButtonGroup aria-label="Action buttons" size="sm">
+          <Button
+            variant="primary"
+            onClick={() => {
+              setPatient(null);
+              setMode("add");
+              setShow(true);
+            }}
+          >
+            <i className="bi bi-person-add"></i> New Patient
+          </Button>
+        </ButtonGroup>
+      </ButtonToolbar>
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -63,7 +68,7 @@ function PatientsList() {
         {patients.length === 0 && (
           <tbody>
             <tr>
-              <td colSpan={10}>No data!</td>
+              <td colSpan={10}>No partients!</td>
             </tr>
           </tbody>
         )}
@@ -107,7 +112,7 @@ function PatientsList() {
           ))}
         </tbody>
       </Table>
-    </>
+    </section>
   );
 }
 
