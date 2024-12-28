@@ -20,7 +20,7 @@ export const TopNav = () => {
           /> */}
           Pharmacy
         </Navbar.Brand>
-        <Nav justify-content-end variant="pill" activeKey={pathname}>
+        <Nav variant="pill" activeKey={pathname}>
           <Nav.Item>
             <Nav.Link href="/patients">Patients</Nav.Link>
           </Nav.Item>

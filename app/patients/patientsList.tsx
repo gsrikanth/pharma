@@ -68,7 +68,7 @@ function PatientsList() {
         {patients.length === 0 && (
           <tbody>
             <tr>
-              <td colSpan={10}>No partients!</td>
+              <td colSpan={10}>No patients!</td>
             </tr>
           </tbody>
         )}
