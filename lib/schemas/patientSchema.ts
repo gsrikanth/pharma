@@ -22,7 +22,7 @@ export const patientSchema = z.object({
   bp: asOptionalField(z.coerce.number().positive()),
   sugar: asOptionalField(z.coerce.number().positive()),
   dob: asOptionalField(z.coerce.date()),
-  doa: z.coerce.date({ required_error: "Required" }),
+  doa: z.coerce.date({ required_error: "Required" }).default(() => new Date()),
   dod: asOptionalField(z.coerce.date()),
   phone: z.string().min(10, { message: "Required" }),
   address: z.string().min(2, { message: "Required" }),

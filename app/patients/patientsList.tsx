@@ -2,23 +2,42 @@
 import Button from "react-bootstrap/esm/Button";
 import Table from "react-bootstrap/Table";
 import PatientForm from "./patientForm";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   addPatient,
+  editPatient,
   deletePatient,
+  loadPatients,
 } from "../../lib/features/patients/patientSlice";
 import { PatientType } from "@/lib/schemas/patientSchema";
 import { ButtonGroup, ButtonToolbar, Container } from "react-bootstrap";
+import { LocalForageContext } from "../StoreProvider";
 
 function PatientsList() {
   const [show, setShow] = useState(false);
   const [mode, setMode] = useState("add");
   const [patient, setPatient] = useState<PatientType | null>(null);
-
+  const localForage = useContext(LocalForageContext);
+  useEffect(() => {
+    if (localForage) {
+      localForage.getItem("patients").then((data) => {
+        if (data) {
+          const patientsData: PatientType[] = data as PatientType[];
+          dispatch(loadPatients(patientsData));
+        }
+      });
+    }
+  }, []);
   const handleClose = () => {
     setPatient(null);
     setShow(false);
+  };
+  const handleSubmit = (data: PatientType) => {
+    dispatch(
+      patient ? editPatient(data, localForage) : addPatient(data, localForage)
+    );
+    handleClose();
   };
   const patients = useSelector(
     (state: { patients: { data: any } }) => state.patients.data
@@ -31,7 +50,7 @@ function PatientsList() {
         mode={mode}
         patient={patient}
         handleClose={handleClose}
-        handleSubmit={handleClose}
+        handleSubmit={handleSubmit}
       />
       <ButtonToolbar
         aria-label="Toolbar with action button groups"
@@ -58,7 +77,7 @@ function PatientsList() {
             <th>Age</th>
             <th>Gender</th>
             <th>Phone</th>
-            <th>Blood Group</th>
+            <th>Symptoms</th>
             <th>Doctor</th>
             <th>Date of Admission</th>
             <th>Status</th>
@@ -80,7 +99,7 @@ function PatientsList() {
               <td>{patient.age}</td>
               <td>{patient.gender}</td>
               <td>{patient.phone}</td>
-              <td>{patient.bg}</td>
+              <td>{patient.symptoms}</td>
               <td>{patient.doctor}</td>
               <td>{patient.doa.toLocaleDateString()}</td>
               <td>{patient.status}</td>
@@ -102,7 +121,7 @@ function PatientsList() {
                   className="me-1"
                   size="sm"
                   onClick={() => {
-                    dispatch(deletePatient(patient));
+                    dispatch(deletePatient(patient, localForage));
                   }}
                 >
                   <i className="bi bi-trash"></i>

@@ -7,7 +7,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 import { Col, Container, Row, Stack } from "react-bootstrap";
-import SideNav from "./components/SideNav";
 
 interface Props {
   readonly children: ReactNode;

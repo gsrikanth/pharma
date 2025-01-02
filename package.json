@@ -10,6 +10,7 @@
     "@reduxjs/toolkit": "^2.2.0",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "localforage": "^1.10.0",
     "next": "latest",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.7",

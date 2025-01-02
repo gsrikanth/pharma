@@ -9,12 +9,6 @@ import {
   genderOptions,
   statusOptions,
 } from "@/lib/schemas/patientSchema";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  addPatient,
-  deletePatient,
-  editPatient,
-} from "../../lib/features/patients/patientSlice";
 import { useEffect } from "react";
 
 function PatientForm(props: any) {
@@ -27,18 +21,18 @@ function PatientForm(props: any) {
     resolver: zodResolver(patientSchema),
     defaultValues: props.patient || {},
   });
-  const dispatch = useDispatch();
+
   useEffect(() => {
-    reset(props.patient || {});
+    reset(props.patient || {}, { keepDefaultValues: true });
   }, [props.patient]);
+
   const onSubmit = (data: any) => {
-    dispatch(props.patient ? editPatient(data) : addPatient(data));
-    props.handleSubmit();
+    props.handleSubmit(data);
     reset();
   };
   const onCancel = (data: any) => {
-    reset();
     props.handleClose();
+    reset();
   };
   return (
     <AppModal
@@ -164,6 +158,28 @@ function PatientForm(props: any) {
           </Form.Group>
         </Row>
         <Row className="mb-3">
+          <Form.Group as={Col} controlId="formGridAddress">
+            <FloatingLabel
+              controlId="floatingInputAddress"
+              label="Address *"
+              className="mb-3"
+            >
+              <Form.Control
+                type="text"
+                as={"textarea"}
+                rows={4}
+                {...register("address")}
+                isInvalid={!!errors.address}
+                required
+                placeholder="Address"
+              />
+              <Form.Control.Feedback type="invalid">
+                {errors.address?.message && String(errors.address.message)}
+              </Form.Control.Feedback>
+            </FloatingLabel>
+          </Form.Group>
+        </Row>
+        <Row className="mb-3">
           <Form.Group as={Col} controlId="formGridSymptoms">
             <FloatingLabel
               controlId="floatingInputSymptoms"
@@ -182,6 +198,84 @@ function PatientForm(props: any) {
               <Form.Control.Feedback type="invalid">
                 {errors.symptoms?.message && String(errors.symptoms.message)}
               </Form.Control.Feedback>
+            </FloatingLabel>
+          </Form.Group>
+        </Row>
+        <Row className="mb-3">
+          <Form.Group as={Col} controlId="formGridDoctor">
+            <FloatingLabel
+              controlId="floatingInputDoctor"
+              label="Doctor *"
+              className="mb-3"
+            >
+              <Form.Control
+                type="text"
+                {...register("doctor")}
+                isInvalid={!!errors.doctor}
+                required
+                placeholder="Doctor"
+              />
+              <Form.Control.Feedback type="invalid">
+                {errors.doctor?.message && String(errors.doctor.message)}
+              </Form.Control.Feedback>{" "}
+            </FloatingLabel>
+          </Form.Group>
+          <Form.Group as={Col} controlId="formGridStatus">
+            <FloatingLabel controlId="floatingInputStatus" label="Status *">
+              <Form.Select
+                aria-label="Status"
+                required
+                {...register("status")}
+                isInvalid={!!errors.status}
+              >
+                <option value="">Select</option>
+                {statusOptions.map((status, index) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </Form.Select>
+              <Form.Control.Feedback type="invalid">
+                {errors.status?.message && String(errors.status.message)}
+              </Form.Control.Feedback>
+            </FloatingLabel>
+          </Form.Group>
+        </Row>
+        <Row className="mb-3">
+          <Form.Group as={Col} controlId="formGriDOA">
+            <FloatingLabel
+              controlId="floatingInpuDOA"
+              label="Date of admission *"
+              className="mb-3"
+            >
+              <Form.Control
+                type="date"
+                {...register("doa")}
+                isInvalid={!!errors.doa}
+                required
+                value={new Date().toISOString().split("T")[0]}
+                placeholder="Date of admission"
+              />
+              <Form.Control.Feedback type="invalid">
+                {errors.doa?.message && String(errors.doa.message)}
+              </Form.Control.Feedback>{" "}
+            </FloatingLabel>
+          </Form.Group>
+          <Form.Group as={Col} controlId="formGridDOD">
+            <FloatingLabel
+              controlId="floatingInpuDOD"
+              label="Date of discharge"
+              className="mb-3"
+            >
+              <Form.Control
+                type="date"
+                {...register("dod")}
+                isInvalid={!!errors.dod}
+                placeholder="Date of discharge"
+              />
+              <Form.Control.Feedback type="invalid">
+                {errors.dod?.message && String(errors.dod.message)}
+              </Form.Control.Feedback>{" "}
             </FloatingLabel>
           </Form.Group>
         </Row>
@@ -235,105 +329,6 @@ function PatientForm(props: any) {
               />
               <Form.Control.Feedback type="invalid">
                 {errors.sugar?.message && String(errors.sugar.message)}
-              </Form.Control.Feedback>
-            </FloatingLabel>
-          </Form.Group>
-        </Row>
-        <Row className="mb-3">
-          <Form.Group as={Col} controlId="formGriDOA">
-            <FloatingLabel
-              controlId="floatingInpuDOA"
-              label="Date of admission *"
-              className="mb-3"
-            >
-              <Form.Control
-                type="date"
-                {...register("doa")}
-                isInvalid={!!errors.doa}
-                required
-                placeholder="Date of admission"
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.doa?.message && String(errors.doa.message)}
-              </Form.Control.Feedback>{" "}
-            </FloatingLabel>
-          </Form.Group>
-          <Form.Group as={Col} controlId="formGridDOD">
-            <FloatingLabel
-              controlId="floatingInpuDOD"
-              label="Date of discharge"
-              className="mb-3"
-            >
-              <Form.Control
-                type="date"
-                {...register("dod")}
-                isInvalid={!!errors.dod}
-                placeholder="Date of discharge"
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.dod?.message && String(errors.dod.message)}
-              </Form.Control.Feedback>{" "}
-            </FloatingLabel>
-          </Form.Group>
-        </Row>
-        <Row className="mb-3">
-          <Form.Group as={Col} controlId="formGridDoctor">
-            <FloatingLabel
-              controlId="floatingInputDoctor"
-              label="Doctor *"
-              className="mb-3"
-            >
-              <Form.Control
-                type="text"
-                {...register("doctor")}
-                isInvalid={!!errors.doctor}
-                required
-                placeholder="Doctor"
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.doctor?.message && String(errors.doctor.message)}
-              </Form.Control.Feedback>{" "}
-            </FloatingLabel>
-          </Form.Group>
-          <Form.Group as={Col} controlId="formGridStatus">
-            <FloatingLabel controlId="floatingInputStatus" label="Status *">
-              <Form.Select
-                aria-label="Status"
-                required
-                {...register("status")}
-                isInvalid={!!errors.status}
-              >
-                <option value="">Select</option>
-                {statusOptions.map((status, index) => (
-                  <option key={status} value={status}>
-                    {status}
-                  </option>
-                ))}
-              </Form.Select>
-              <Form.Control.Feedback type="invalid">
-                {errors.status?.message && String(errors.status.message)}
-              </Form.Control.Feedback>
-            </FloatingLabel>
-          </Form.Group>
-        </Row>
-        <Row className="mb-3">
-          <Form.Group as={Col} controlId="formGridAddress">
-            <FloatingLabel
-              controlId="floatingInputAddress"
-              label="Address *"
-              className="mb-3"
-            >
-              <Form.Control
-                type="text"
-                as={"textarea"}
-                rows={4}
-                {...register("address")}
-                isInvalid={!!errors.address}
-                required
-                placeholder="Address"
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.address?.message && String(errors.address.message)}
               </Form.Control.Feedback>
             </FloatingLabel>
           </Form.Group>
