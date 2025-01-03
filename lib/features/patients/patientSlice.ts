@@ -41,7 +41,7 @@ export const patientSlice = createAppSlice({
         // which detects changes to a "draft state" and produces a brand new
         // immutable state based off those changes
         state.data.push(action.payload);
-        action.payload.name
+        action.payload?.name
           .toLowerCase()
           .includes(state.filterText.toLowerCase()) &&
           state.filteredData.push(action.payload);
@@ -55,14 +55,14 @@ export const patientSlice = createAppSlice({
       },
       (state, action: PayloadAction<PatientType>) => {
         let index = state.data.findIndex(
-          (patient: PatientType) => patient.id === action.payload.id
+          (patient: PatientType) => patient?.id === action.payload?.id
         );
         if (index !== -1) {
           state.data.splice(index, 1, action.payload);
           saveToLocalStorage(state);
         }
         index = state.filteredData.findIndex(
-          (patient: PatientType) => patient.id === action.payload.id
+          (patient: PatientType) => patient?.id === action.payload?.id
         );
         if (index !== -1) {
           state.filteredData.splice(index, 1, action.payload);
@@ -77,14 +77,14 @@ export const patientSlice = createAppSlice({
       },
       (state, action: PayloadAction<PatientType>) => {
         let index = state.data.findIndex(
-          (patient: PatientType) => patient.id === action.payload.id
+          (patient: PatientType) => patient?.id === action.payload?.id
         );
         if (index !== -1) {
           state.data.splice(index, 1);
           saveToLocalStorage(state);
         }
         index = state.filteredData.findIndex(
-          (patient: PatientType) => patient.id === action.payload.id
+          (patient: PatientType) => patient?.id === action.payload?.id
         );
         if (index !== -1) {
           state.filteredData.splice(index, 1);
@@ -102,7 +102,7 @@ export const patientSlice = createAppSlice({
       (state: PatientsSliceState, action: PayloadAction<string>) => {
         const filterText = action.payload;
         const filterPatients = state.data.filter((patient) =>
-          patient.name.toLowerCase().includes(filterText.toLowerCase())
+          patient?.name.toLowerCase().includes(filterText.toLowerCase())
         );
         state.filterText = filterText;
         state.filteredData = !filterText ? state.data : filterPatients;
