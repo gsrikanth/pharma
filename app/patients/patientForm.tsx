@@ -3,44 +3,61 @@ import Form from "react-bootstrap/Form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AppModal from "../ui/AppModal";
-import { Row, Col, FloatingLabel } from "react-bootstrap";
+import { Row, Col, FloatingLabel, Image } from "react-bootstrap";
 import {
   patientSchema,
   genderOptions,
   statusOptions,
+  readUploadedFileAsText,
 } from "@/lib/schemas/patientSchema";
-import { useEffect } from "react";
-import ImageUpload from "../ui/ImageUpload";
+import { useEffect, useState } from "react";
 
 function PatientForm(props: any) {
+  const deleteMode = props.mode === "delete";
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(patientSchema),
+    resolver: zodResolver(patientSchema, { async: true }),
     defaultValues: props.patient || {},
+    disabled: deleteMode,
   });
-
+  const [photo, setPhoto] = useState<string | null>(null);
   useEffect(() => {
     reset(props.patient || {}, { keepDefaultValues: true });
   }, [props.patient]);
-
   const onSubmit = (data: any) => {
     props.handleSubmit(data);
+    setPhoto(null);
     reset();
   };
-  const onCancel = (data: any) => {
+  const onDelete = () => {
+    props.handleDelete();
+    setPhoto(null);
+    reset();
+  };
+  const onCancel = () => {
     props.handleClose();
+    setPhoto(null);
     reset();
   };
   return (
     <AppModal
       show={props.show}
-      title={props.mode === "add" ? "Add Patient" : "Edit Patient"}
+      title={
+        props.mode === "add"
+          ? "Add patient"
+          : deleteMode
+          ? "Delete patient"
+          : "Edit patient"
+      }
+      deleteMode={deleteMode}
+      image={props.patient?.photo}
       handleSubmit={handleSubmit(onSubmit)}
       handleClose={onCancel}
+      handleDelete={onDelete}
     >
       <Form noValidate>
         <Row className="mb-3">
@@ -288,11 +305,42 @@ function PatientForm(props: any) {
             </FloatingLabel>
           </Form.Group>
         </Row>
-        {/* <Row className="mb-3">
-          <Form.Group as={Col} controlId="formGridO2">
-            <ImageUpload />
+        <Row className="mb-3">
+          <Form.Group as={Col} lg={6} controlId="formGridO2">
+            <FloatingLabel controlId="floatingInputImage" label="Photo">
+              <Form.Control
+                type="file"
+                accept="image/*"
+                placeholder="Photo"
+                {...register("photo")}
+                isInvalid={!!errors.photo}
+                onChange={async (e) => {
+                  const file = (e.target as HTMLInputElement).files?.[0];
+                  if (file) {
+                    const photoContent = await readUploadedFileAsText(file);
+                    setPhoto(photoContent as string);
+                  } else {
+                    setPhoto(null);
+                  }
+                }}
+              />
+              <Form.Control.Feedback type="invalid">
+                {errors.photo?.message && String(errors.photo.message)}
+              </Form.Control.Feedback>
+            </FloatingLabel>
           </Form.Group>
-        </Row> */}
+          <Form.Group as={Col} lg={6} controlId="formGridImage" align="center">
+            {(photo || props.patient?.photo) && (
+              <Image
+                rounded
+                src={photo || props.patient?.photo}
+                thumbnail
+                width={"50%"}
+                alt="Preview"
+              />
+            )}
+          </Form.Group>
+        </Row>
       </Form>
     </AppModal>
   );

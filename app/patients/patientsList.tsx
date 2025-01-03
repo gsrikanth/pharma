@@ -19,6 +19,7 @@ import {
   Form,
   InputGroup,
   Spinner,
+  Image,
 } from "react-bootstrap";
 import { LocalForageContext } from "../StoreProvider";
 
@@ -51,6 +52,12 @@ function PatientsList() {
     );
     handleClose();
   };
+  const handleDelete = () => {
+    if (patient) {
+      dispatch(deletePatient(patient, localForage));
+      handleClose();
+    }
+  };
   const patients = useSelector(
     (state: { patients: { data: any } }) => state.patients.data
   );
@@ -66,18 +73,19 @@ function PatientsList() {
         patient={patient}
         handleClose={handleClose}
         handleSubmit={handleSubmit}
+        handleDelete={handleDelete}
       />
       <ButtonToolbar
         aria-label="Toolbar with action button groups"
         className="clearfix mb-1"
       >
         <Container fluid className="clearfix m-0 p-0">
-          <InputGroup size="sm" className="float-start">
+          <InputGroup size="sm" className="float-start w-25">
             <Form.Control
               type="text"
               size="sm"
-              placeholder="Search"
-              aria-label="Search"
+              placeholder="Filter by name"
+              aria-label="Filter"
               aria-describedby="btnGroupAddon"
               onChange={(e) => {
                 dispatch(filterPatients(e.target.value));
@@ -93,7 +101,7 @@ function PatientsList() {
                 setShow(true);
               }}
             >
-              <i className="bi bi-person-add"></i> New Patient
+              <i className="bi bi-person-add"></i> New patient
             </Button>
           </ButtonGroup>
         </Container>
@@ -102,6 +110,7 @@ function PatientsList() {
         <thead>
           <tr>
             <th>#</th>
+            <th>Photo</th>
             <th>Name</th>
             <th>Age</th>
             <th>Gender</th>
@@ -113,10 +122,10 @@ function PatientsList() {
             <th>Actions</th>
           </tr>
         </thead>
-        {patients.length === 0 && (
+        {filteredPatients.length === 0 && (
           <tbody>
             <tr>
-              <td colSpan={10}>
+              <td colSpan={15} align="center">
                 {loading ? <Spinner size="sm"></Spinner> : "No patients!"}
               </td>
             </tr>
@@ -126,14 +135,22 @@ function PatientsList() {
           {filteredPatients.map((patient: PatientType, index: number) => (
             <tr key={index}>
               <td>{index + 1}</td>
-              <td>{patient.name}</td>
-              <td>{patient.age}</td>
-              <td>{patient.gender}</td>
-              <td>{patient.phone}</td>
-              <td>{patient.symptoms}</td>
-              <td>{patient.doctor}</td>
-              <td>{patient.doa.toLocaleDateString()}</td>
-              <td>{patient.status}</td>
+              <td>
+                <Image
+                  rounded
+                  width={"30em"}
+                  height={"30em"}
+                  src={patient?.photo as string | undefined}
+                />
+              </td>
+              <td>{patient?.name}</td>
+              <td>{patient?.age}</td>
+              <td>{patient?.gender}</td>
+              <td>{patient?.phone}</td>
+              <td>{patient?.symptoms}</td>
+              <td>{patient?.doctor}</td>
+              <td>{patient?.doa.toLocaleDateString()}</td>
+              <td>{patient?.status}</td>
               <td>
                 <Button
                   variant="secondary"
@@ -152,7 +169,9 @@ function PatientsList() {
                   className="me-1"
                   size="sm"
                   onClick={() => {
-                    dispatch(deletePatient(patient, localForage));
+                    setPatient(patient);
+                    setMode("delete");
+                    setShow(true);
                   }}
                 >
                   <i className="bi bi-trash"></i>

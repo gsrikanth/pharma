@@ -1,16 +1,11 @@
 "use client";
-import { useState } from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal, Image } from "react-bootstrap";
 
 function AppModal(props: any) {
-  const handleClose = () => {
-    props.handleClose();
-  };
-
   return (
     <Modal
       show={props.show}
-      onHide={handleClose}
+      onHide={props.handleClose}
       backdrop="static"
       keyboard={false}
       size="lg"
@@ -18,16 +13,32 @@ function AppModal(props: any) {
       scrollable
     >
       <Modal.Header closeButton>
-        <Modal.Title>{props.title}</Modal.Title>
+        <Modal.Title>
+          {props.image && (
+            <Image
+              rounded
+              width={"25em"}
+              height={"25em"}
+              src={props.image as string | undefined}
+            />
+          )}
+          <label className="ms-1">{props.title}</label>
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>{props.children}</Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={props.handleClose}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={props.handleSubmit}>
-          Save
-        </Button>
+        {props.deleteMode ? (
+          <Button variant="danger" onClick={props.handleDelete}>
+            Delete
+          </Button>
+        ) : (
+          <Button variant="primary" onClick={props.handleSubmit}>
+            Save
+          </Button>
+        )}
       </Modal.Footer>
     </Modal>
   );
