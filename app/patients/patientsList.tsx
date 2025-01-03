@@ -69,7 +69,7 @@ function PatientsList() {
           </Button>
         </ButtonGroup>
       </ButtonToolbar>
-      <Table striped bordered hover>
+      <Table striped bordered hover responsive>
         <thead>
           <tr>
             <th>#</th>
