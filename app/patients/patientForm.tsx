@@ -10,6 +10,7 @@ import {
   statusOptions,
 } from "@/lib/schemas/patientSchema";
 import { useEffect } from "react";
+import ImageUpload from "../ui/ImageUpload";
 
 function PatientForm(props: any) {
   const {
@@ -44,11 +45,7 @@ function PatientForm(props: any) {
       <Form noValidate>
         <Row className="mb-3">
           <Form.Group as={Col} controlId="formGridName">
-            <FloatingLabel
-              controlId="floatingInputName"
-              label="Name *"
-              className="mb-3"
-            >
+            <FloatingLabel controlId="floatingInputName" label="Name *">
               <Form.Control
                 type="text"
                 {...register("name")}
@@ -84,11 +81,7 @@ function PatientForm(props: any) {
         </Row>
         <Row className="mb-3">
           <Form.Group as={Col} controlId="formGridAge">
-            <FloatingLabel
-              controlId="floatingInputAge"
-              label="Age *"
-              className="mb-3"
-            >
+            <FloatingLabel controlId="floatingInputAge" label="Age *">
               <Form.Control
                 type="number"
                 {...register("age")}
@@ -102,11 +95,7 @@ function PatientForm(props: any) {
             </FloatingLabel>
           </Form.Group>
           <Form.Group as={Col} controlId="formGriDOB">
-            <FloatingLabel
-              controlId="floatingInpuDOB"
-              label="Date of birth"
-              className="mb-3"
-            >
+            <FloatingLabel controlId="floatingInpuDOB" label="Date of birth">
               <Form.Control
                 type="date"
                 {...register("dob")}
@@ -121,11 +110,7 @@ function PatientForm(props: any) {
         </Row>
         <Row className="mb-3">
           <Form.Group as={Col} controlId="formGridPhone">
-            <FloatingLabel
-              controlId="floatingInputPhone"
-              label="Phone *"
-              className="mb-3"
-            >
+            <FloatingLabel controlId="floatingInputPhone" label="Phone *">
               <Form.Control
                 type="text"
                 placeholder="Phone"
@@ -139,11 +124,7 @@ function PatientForm(props: any) {
             </FloatingLabel>
           </Form.Group>
           <Form.Group as={Col} controlId="formGridEmail">
-            <FloatingLabel
-              controlId="floatingInputEmail"
-              label="Email"
-              className="mb-3"
-            >
+            <FloatingLabel controlId="floatingInputEmail" label="Email">
               <Form.Control
                 type="email"
                 placeholder="Email"
@@ -159,11 +140,7 @@ function PatientForm(props: any) {
         </Row>
         <Row className="mb-3">
           <Form.Group as={Col} controlId="formGridAddress">
-            <FloatingLabel
-              controlId="floatingInputAddress"
-              label="Address *"
-              className="mb-3"
-            >
+            <FloatingLabel controlId="floatingInputAddress" label="Address *">
               <Form.Control
                 type="text"
                 as={"textarea"}
@@ -181,11 +158,7 @@ function PatientForm(props: any) {
         </Row>
         <Row className="mb-3">
           <Form.Group as={Col} controlId="formGridSymptoms">
-            <FloatingLabel
-              controlId="floatingInputSymptoms"
-              label="Symptoms *"
-              className="mb-3"
-            >
+            <FloatingLabel controlId="floatingInputSymptoms" label="Symptoms *">
               <Form.Control
                 type="text"
                 as={"textarea"}
@@ -203,11 +176,7 @@ function PatientForm(props: any) {
         </Row>
         <Row className="mb-3">
           <Form.Group as={Col} controlId="formGridDoctor">
-            <FloatingLabel
-              controlId="floatingInputDoctor"
-              label="Doctor *"
-              className="mb-3"
-            >
+            <FloatingLabel controlId="floatingInputDoctor" label="Doctor *">
               <Form.Control
                 type="text"
                 {...register("doctor")}
@@ -246,7 +215,6 @@ function PatientForm(props: any) {
             <FloatingLabel
               controlId="floatingInpuDOA"
               label="Date of admission *"
-              className="mb-3"
             >
               <Form.Control
                 type="date"
@@ -265,7 +233,6 @@ function PatientForm(props: any) {
             <FloatingLabel
               controlId="floatingInpuDOD"
               label="Date of discharge"
-              className="mb-3"
             >
               <Form.Control
                 type="date"
@@ -280,12 +247,8 @@ function PatientForm(props: any) {
           </Form.Group>
         </Row>
         <Row className="mb-3">
-          <Form.Group as={Col} controlId="formGridBG">
-            <FloatingLabel
-              controlId="floatingInputBG"
-              label="Blood Group"
-              className="mb-3"
-            >
+          <Form.Group as={Col} sm={4} controlId="formGridBG">
+            <FloatingLabel controlId="floatingInputBG" label="Blood Group">
               <Form.Control
                 type="text"
                 {...register("bg")}
@@ -297,12 +260,8 @@ function PatientForm(props: any) {
               </Form.Control.Feedback>{" "}
             </FloatingLabel>
           </Form.Group>
-          <Form.Group as={Col} controlId="formGridBP">
-            <FloatingLabel
-              controlId="floatingInputBP"
-              label="Blood Pressure"
-              className="mb-3"
-            >
+          <Form.Group as={Col} sm={4} controlId="formGridBP">
+            <FloatingLabel controlId="floatingInputBP" label="Blood Pressure">
               <Form.Control
                 type="text"
                 {...register("bp")}
@@ -315,12 +274,8 @@ function PatientForm(props: any) {
               </Form.Control.Feedback>{" "}
             </FloatingLabel>
           </Form.Group>
-          <Form.Group as={Col} controlId="formGridSugar">
-            <FloatingLabel
-              controlId="floatingInputSugar"
-              label="Sugar"
-              className="mb-3"
-            >
+          <Form.Group as={Col} sm={4} controlId="formGridSugar">
+            <FloatingLabel controlId="floatingInputSugar" label="Sugar">
               <Form.Control
                 type="text"
                 placeholder="Sugar"
@@ -333,6 +288,11 @@ function PatientForm(props: any) {
             </FloatingLabel>
           </Form.Group>
         </Row>
+        {/* <Row className="mb-3">
+          <Form.Group as={Col} controlId="formGridO2">
+            <ImageUpload />
+          </Form.Group>
+        </Row> */}
       </Form>
     </AppModal>
   );

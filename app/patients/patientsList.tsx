@@ -9,24 +9,36 @@ import {
   editPatient,
   deletePatient,
   loadPatients,
+  filterPatients,
 } from "../../lib/features/patients/patientSlice";
 import { PatientType } from "@/lib/schemas/patientSchema";
-import { ButtonGroup, ButtonToolbar, Container } from "react-bootstrap";
+import {
+  ButtonGroup,
+  ButtonToolbar,
+  Container,
+  Form,
+  InputGroup,
+  Spinner,
+} from "react-bootstrap";
 import { LocalForageContext } from "../StoreProvider";
 
 function PatientsList() {
   const [show, setShow] = useState(false);
   const [mode, setMode] = useState("add");
+  const [loading, setLoading] = useState(true);
   const [patient, setPatient] = useState<PatientType | null>(null);
   const localForage = useContext(LocalForageContext);
   useEffect(() => {
     if (localForage) {
       localForage.getItem("patients").then((data) => {
+        setLoading(false);
         if (data) {
           const patientsData: PatientType[] = data as PatientType[];
           dispatch(loadPatients(patientsData));
         }
       });
+    } else {
+      setLoading(false);
     }
   }, []);
   const handleClose = () => {
@@ -42,6 +54,9 @@ function PatientsList() {
   const patients = useSelector(
     (state: { patients: { data: any } }) => state.patients.data
   );
+  const filteredPatients = useSelector(
+    (state: { patients: { filteredData: any } }) => state.patients.filteredData
+  );
   const dispatch = useDispatch();
   return (
     <section>
@@ -54,20 +69,34 @@ function PatientsList() {
       />
       <ButtonToolbar
         aria-label="Toolbar with action button groups"
-        className="justify-content-end p-1"
+        className="clearfix mb-1"
       >
-        <ButtonGroup aria-label="Action buttons" size="sm">
-          <Button
-            variant="primary"
-            onClick={() => {
-              setPatient(null);
-              setMode("add");
-              setShow(true);
-            }}
-          >
-            <i className="bi bi-person-add"></i> New Patient
-          </Button>
-        </ButtonGroup>
+        <Container fluid className="clearfix m-0 p-0">
+          <InputGroup size="sm" className="float-start">
+            <Form.Control
+              type="text"
+              size="sm"
+              placeholder="Search"
+              aria-label="Search"
+              aria-describedby="btnGroupAddon"
+              onChange={(e) => {
+                dispatch(filterPatients(e.target.value));
+              }}
+            />
+          </InputGroup>
+          <ButtonGroup aria-label="Add buttons" size="sm" className="float-end">
+            <Button
+              variant="primary"
+              onClick={() => {
+                setPatient(null);
+                setMode("add");
+                setShow(true);
+              }}
+            >
+              <i className="bi bi-person-add"></i> New Patient
+            </Button>
+          </ButtonGroup>
+        </Container>
       </ButtonToolbar>
       <Table striped bordered hover responsive>
         <thead>
@@ -87,12 +116,14 @@ function PatientsList() {
         {patients.length === 0 && (
           <tbody>
             <tr>
-              <td colSpan={10}>No patients!</td>
+              <td colSpan={10}>
+                {loading ? <Spinner size="sm"></Spinner> : "No patients!"}
+              </td>
             </tr>
           </tbody>
         )}
         <tbody>
-          {patients.map((patient: PatientType, index: number) => (
+          {filteredPatients.map((patient: PatientType, index: number) => (
             <tr key={index}>
               <td>{index + 1}</td>
               <td>{patient.name}</td>

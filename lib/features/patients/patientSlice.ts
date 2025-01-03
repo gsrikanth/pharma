@@ -4,10 +4,14 @@ import { PatientType } from "@/lib/schemas/patientSchema";
 
 export interface PatientsSliceState {
   data: PatientType[];
+  filteredData: PatientType[];
+  filterText: string;
 }
 
 const initialState: PatientsSliceState = {
   data: [],
+  filteredData: [],
+  filterText: "",
 };
 
 const saveToLocalStorage = (state: PatientsSliceState) => {
@@ -37,6 +41,10 @@ export const patientSlice = createAppSlice({
         // which detects changes to a "draft state" and produces a brand new
         // immutable state based off those changes
         state.data.push(action.payload);
+        action.payload.name
+          .toLowerCase()
+          .includes(state.filterText.toLowerCase()) &&
+          state.filteredData.push(action.payload);
         saveToLocalStorage(state);
       }
     ),
@@ -46,11 +54,18 @@ export const patientSlice = createAppSlice({
         return { payload: patient, extraData };
       },
       (state, action: PayloadAction<PatientType>) => {
-        const index = state.data.findIndex(
+        let index = state.data.findIndex(
           (patient: PatientType) => patient.id === action.payload.id
         );
         if (index !== -1) {
           state.data.splice(index, 1, action.payload);
+          saveToLocalStorage(state);
+        }
+        index = state.filteredData.findIndex(
+          (patient: PatientType) => patient.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.filteredData.splice(index, 1, action.payload);
           saveToLocalStorage(state);
         }
       }
@@ -61,11 +76,18 @@ export const patientSlice = createAppSlice({
         return { payload: patient, extraData };
       },
       (state, action: PayloadAction<PatientType>) => {
-        const index = state.data.findIndex(
+        let index = state.data.findIndex(
           (patient: PatientType) => patient.id === action.payload.id
         );
         if (index !== -1) {
           state.data.splice(index, 1);
+          saveToLocalStorage(state);
+        }
+        index = state.filteredData.findIndex(
+          (patient: PatientType) => patient.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.filteredData.splice(index, 1);
           saveToLocalStorage(state);
         }
       }
@@ -73,11 +95,27 @@ export const patientSlice = createAppSlice({
     loadPatients: create.reducer(
       (state: PatientsSliceState, action: PayloadAction<PatientType[]>) => {
         state.data = action.payload;
+        state.filteredData = action.payload;
+      }
+    ),
+    filterPatients: create.reducer(
+      (state: PatientsSliceState, action: PayloadAction<string>) => {
+        const filterText = action.payload;
+        const filterPatients = state.data.filter((patient) =>
+          patient.name.toLowerCase().includes(filterText.toLowerCase())
+        );
+        state.filterText = filterText;
+        state.filteredData = !filterText ? state.data : filterPatients;
       }
     ),
   }),
 });
 
 // Action creators are generated for each case reducer function.
-export const { addPatient, editPatient, deletePatient, loadPatients } =
-  patientSlice.actions;
+export const {
+  addPatient,
+  editPatient,
+  deletePatient,
+  loadPatients,
+  filterPatients,
+} = patientSlice.actions;

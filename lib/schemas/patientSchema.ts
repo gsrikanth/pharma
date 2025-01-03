@@ -18,7 +18,7 @@ export const patientSchema = z.object({
   email: asOptionalField(z.string().email()),
   gender: z.enum(genderOptions, { message: "Required" }),
   bg: asOptionalField(z.string().min(2)),
-  age: z.coerce.number().int().positive({ message: "Required" }),
+  age: z.coerce.number().int().positive({ message: "Required" }).max(100),
   bp: asOptionalField(z.coerce.number().positive()),
   sugar: asOptionalField(z.coerce.number().positive()),
   dob: asOptionalField(z.coerce.date()),
