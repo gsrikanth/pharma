@@ -48,20 +48,26 @@ export const patientSchema = z
     doctor: z.string().min(2, { message: "Required" }),
     symptoms: z.string().min(2, { message: "Required" }),
     status: z.enum(statusOptions, { message: "Required" }),
-    photo: z
-      .any()
-      .refine((file) => file[0] instanceof File, "Please upload an image file.")
-      .refine(
-        (file) => file[0].type.startsWith("image"),
-        "Only image files are allowed."
-      ),
+    photo: asOptionalField(
+      z.any().refine((file) => {
+        if (file[0] === undefined) {
+          return true;
+        } else {
+          return { message: "Required" };
+        }
+      })
+    ),
   })
   .transform(async (value, ctx) => {
     const file = value.photo;
-    if (file) {
+    if (typeof file !== "string" && file.length > 0) {
       const fileContents = await readUploadedFileAsText(file[0]);
       return { ...value, photo: fileContents };
     }
+    return {
+      ...value,
+      photo: typeof file === "string" && file.length ? file : "",
+    };
   });
 
 export type PatientType = z.infer<typeof patientSchema>; // string

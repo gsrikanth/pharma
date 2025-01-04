@@ -136,12 +136,16 @@ function PatientsList() {
             <tr key={index}>
               <td>{index + 1}</td>
               <td>
-                <Image
-                  rounded
-                  width={"30em"}
-                  height={"30em"}
-                  src={patient?.photo as string | undefined}
-                />
+                {patient.photo ? (
+                  <Image
+                    rounded
+                    width={"30em"}
+                    height={"30em"}
+                    src={patient?.photo as string | undefined}
+                  />
+                ) : (
+                  ""
+                )}
               </td>
               <td>{patient?.name}</td>
               <td>{patient?.age}</td>

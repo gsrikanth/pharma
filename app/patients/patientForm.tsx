@@ -307,7 +307,7 @@ function PatientForm(props: any) {
         </Row>
         <Row className="mb-3">
           <Form.Group as={Col} lg={6} controlId="formGridO2">
-            <FloatingLabel controlId="floatingInputImage" label="Photo">
+            <FloatingLabel controlId="floatingInputImage" label="Photo *">
               <Form.Control
                 type="file"
                 accept="image/*"
