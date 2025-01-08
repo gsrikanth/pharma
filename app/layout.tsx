@@ -5,6 +5,8 @@ import { TopNav } from "./components/TopNav";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
+import "datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css";
 
 import { Col, Container, Row, Stack } from "react-bootstrap";
 

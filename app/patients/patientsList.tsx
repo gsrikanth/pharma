@@ -1,6 +1,5 @@
 "use client";
 import Button from "react-bootstrap/esm/Button";
-import Table from "react-bootstrap/Table";
 import PatientForm from "./patientForm";
 import { useContext, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -9,19 +8,19 @@ import {
   editPatient,
   deletePatient,
   loadPatients,
-  filterPatients,
 } from "../../lib/features/patients/patientSlice";
 import { PatientType } from "@/lib/schemas/patientSchema";
-import {
-  ButtonGroup,
-  ButtonToolbar,
-  Container,
-  Form,
-  InputGroup,
-  Spinner,
-  Image,
-} from "react-bootstrap";
+import { Image } from "react-bootstrap";
 import { LocalForageContext } from "../StoreProvider";
+import moment from "moment";
+
+import DataTable from "datatables.net-react";
+import BSDT from "datatables.net-bs5";
+import "datatables.net-buttons-bs5";
+import "datatables.net-buttons/js/buttons.html5";
+import "datatables.net-buttons/js/buttons.print";
+
+DataTable.use(BSDT);
 
 function PatientsList() {
   const [show, setShow] = useState(false);
@@ -65,48 +64,98 @@ function PatientsList() {
     (state: { patients: { filteredData: any } }) => state.patients.filteredData
   );
   const dispatch = useDispatch();
+  const columns = [
+    {
+      data: null,
+      render: (data: any, type: any, row: any, meta: any) => meta.row + 1,
+    },
+    { data: "photo", orderable: false },
+    { data: "name" },
+    { data: "age" },
+    { data: "gender" },
+    { data: "phone" },
+    { data: "symptoms" },
+    { data: "doctor" },
+    { data: "doa", render: (data: any) => moment(data).format("DD/MM/YYYY") },
+    { data: "status" },
+    { data: "actions", orderable: false },
+  ];
+
+  const slots = {
+    1: (data: any, row: any) => {
+      return data ? (
+        <Image
+          rounded
+          width={"30em"}
+          height={"30em"}
+          src={data as string | undefined}
+        />
+      ) : (
+        ""
+      );
+    },
+    10: (data: any, row: any) => {
+      return (
+        <>
+          <Button
+            variant="secondary"
+            size="sm"
+            className="me-1"
+            onClick={() => {
+              setPatient(row);
+              setMode("edit");
+              setShow(true);
+            }}
+          >
+            <i className="bi bi-pencil-square"></i>
+          </Button>
+          <Button
+            variant="danger"
+            className="me-1"
+            size="sm"
+            onClick={() => {
+              setPatient(row);
+              setMode("delete");
+              setShow(true);
+            }}
+          >
+            <i className="bi bi-trash"></i>
+          </Button>
+        </>
+      );
+    },
+  };
   return (
     <section>
-      <PatientForm
-        show={show}
-        mode={mode}
-        patient={patient}
-        handleClose={handleClose}
-        handleSubmit={handleSubmit}
-        handleDelete={handleDelete}
-      />
-      <ButtonToolbar
-        aria-label="Toolbar with action button groups"
-        className="clearfix mb-1"
+      <DataTable
+        className="table table-striped table-bordered table-hover"
+        columns={columns}
+        slots={slots}
+        options={{
+          paging: false,
+          info: false,
+          autoWidth: false,
+          layout: {
+            topStart: "search",
+            topEnd: {
+              buttons: [
+                {
+                  text: "Add patient",
+                  className: "btn-primary",
+                  action: function (dt) {
+                    setPatient(null);
+                    setMode("add");
+                    setShow(true);
+                  },
+                },
+                "print",
+                "csv",
+              ],
+            },
+          },
+        }}
+        data={filteredPatients}
       >
-        <Container fluid className="clearfix m-0 p-0">
-          <InputGroup size="sm" className="float-start w-25">
-            <Form.Control
-              type="text"
-              size="sm"
-              placeholder="Filter by name"
-              aria-label="Filter"
-              aria-describedby="btnGroupAddon"
-              onChange={(e) => {
-                dispatch(filterPatients(e.target.value));
-              }}
-            />
-          </InputGroup>
-          <ButtonGroup aria-label="Add buttons" size="sm" className="float-end">
-            <Button
-              variant="primary"
-              onClick={() => {
-                setPatient(null);
-                setMode("add");
-                setShow(true);
-              }}
-            >
-              <i className="bi bi-person-add"></i> New patient
-            </Button>
-          </ButtonGroup>
-        </Container>
-      </ButtonToolbar>
-      <Table striped bordered hover responsive>
         <thead>
           <tr>
             <th>#</th>
@@ -122,69 +171,15 @@ function PatientsList() {
             <th>Actions</th>
           </tr>
         </thead>
-        {filteredPatients.length === 0 && (
-          <tbody>
-            <tr>
-              <td colSpan={15} align="center">
-                {loading ? <Spinner size="sm"></Spinner> : "No patients!"}
-              </td>
-            </tr>
-          </tbody>
-        )}
-        <tbody>
-          {filteredPatients.map((patient: PatientType, index: number) => (
-            <tr key={index}>
-              <td>{index + 1}</td>
-              <td>
-                {patient.photo ? (
-                  <Image
-                    rounded
-                    width={"30em"}
-                    height={"30em"}
-                    src={patient?.photo as string | undefined}
-                  />
-                ) : (
-                  ""
-                )}
-              </td>
-              <td>{patient?.name}</td>
-              <td>{patient?.age}</td>
-              <td>{patient?.gender}</td>
-              <td>{patient?.phone}</td>
-              <td>{patient?.symptoms}</td>
-              <td>{patient?.doctor}</td>
-              <td>{patient?.doa.toLocaleDateString()}</td>
-              <td>{patient?.status}</td>
-              <td>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="me-1"
-                  onClick={() => {
-                    setPatient(patient);
-                    setMode("edit");
-                    setShow(true);
-                  }}
-                >
-                  <i className="bi bi-pencil-square"></i>
-                </Button>
-                <Button
-                  variant="danger"
-                  className="me-1"
-                  size="sm"
-                  onClick={() => {
-                    setPatient(patient);
-                    setMode("delete");
-                    setShow(true);
-                  }}
-                >
-                  <i className="bi bi-trash"></i>
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      </DataTable>
+      <PatientForm
+        show={show}
+        mode={mode}
+        patient={patient}
+        handleClose={handleClose}
+        handleSubmit={handleSubmit}
+        handleDelete={handleDelete}
+      />
     </section>
   );
 }
